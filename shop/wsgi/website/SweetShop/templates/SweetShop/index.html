@@ -1,0 +1,49 @@
+<!-- below is what is used to extend base.html-->
+{% extends 'SweetShop/base.html' %}
+
+<!--
+    this is the index page which is ran when the user initially logs into to the website or when the view products
+    button is pressed on the main navigation. this is used to display all of the products available for purchase.
+-->
+{% block body %}
+<div class="product-container container-fluid">
+    <div class="row">
+        <div class="col-sm-12">
+            <h3>All Products</h3>
+            <br>
+        </div>
+        <!--
+             the if statement below is ran if the object AllProducts is received from the context. if it is
+             a for loop is ran one for each product in AllProducts. Displaying the product name, price and a
+             view details button which allows users to view the details page for each specific item.
+        -->
+         {% if AllProducts %}
+            {% for product in AllProducts %}
+                <div class="col-sm-4 col-lg-2">
+                    <div class="thumbnail" style=" border: 1px solid black;">
+                        <!--
+                            below is what loads the product logo onto the element and also a link is added onto the
+                            image which loads the user to details page of the product so they can press the image of the
+                            product to load the page.
+                        -->
+                        <a href="{% url 'SweetShop:detail' product.id %}">
+                            <img src="{{ product.product_logo }}" class="img-responsive">
+                        </a>
+                        <div class="caption">
+                            <!-- below displays the name and price of the product.-->
+                            <h2>{{ product.name }}</h2>
+                            <h4>£{{ product.price }}</h4>
+
+                            <!--
+                                 below a button is created through the class attribute called view details. which when pressed
+                                 displays the details page of each specific item.
+                            -->
+                            <a href="{% url 'SweetShop:detail' product.id %}" class="btn btn-primary btn-sm" role="button">View Details</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

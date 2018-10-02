@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+
+<!--
+     This page is a base template for all the pages when the user is logged in. it sets a navigation menu that is
+     going to remain constant when the user broswers through the different pages. here the logo, the search
+     input area and button, the all product, basket and logout button are set.
+-->
+
+<html lang="en">
+<head>
+    <style type="text/css">
+
+
+    </style>
+    <meta charset="UTF-8">
+    <title>{% block title %}Shopping{% endblock %}</title>
+    {% load staticfiles %}
+    <link rel="shortcut icon" type="image/png" href="{%  static 'favicon.ico' %}"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <link href='https://fonts.googleapis.com/css?family=Satisfy' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href=""/>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <script type="text/javascript"></script>
+    <script>
+            // this is the ajax function that is called when the add to basket button is pressed from details.html
+            // this uses the productID that is passed and it gets the value of the input field for the quanity which has
+            // the id "quantity" from here a Post ajax request is made to the /addtobasket/, where the csrf token is
+            // passed with the product id and quantity.
+            function addtobasket(productID) {
+                var pro = productID;
+                var quant = document.getElementById("quantity").value;
+                $.ajax({
+                    url: '/addtobasket/',
+                    method: "POST",
+                    data: {
+                        'csrfmiddlewaretoken': "{{  csrf_token  }}",
+                        pro: pro,
+                        quant: quant
+                    },
+                    success: function () {
+                        document.getElementById("message").innerHTML = "Added to basket!";
+                    }
+                });
+            }
+
+            // this is the ajax function that is called when a user clicks the delete button of an item that is
+            // displayed in their basket. a ajax request is made to which call the url /delete_item/ with as a post
+            // method, passing the csrf_token and the basketID. once the item is remvoed it disapears from the page and
+            // the database.
+            function deleteitem(BasketID) {
+                var bask = BasketID;
+                $.ajax({
+                    url: '/delete_item/',
+                    method: "POST",
+                    data: {
+                        'csrfmiddlewaretoken': "{{  csrf_token  }}",
+                        bask: bask,
+                    },
+                    success: function () {
+                        document.getElementById(bask).innerHTML = "";
+                    }
+                });
+            }
+
+            // this is the ajax function called when a user updates the value of the quantity of an item. the basketID
+            // is given, to which new quantity added value is retrieved by getting the element with the id of the
+            // current basketID plus "quan", i had to add a random string, as the basketID value is already used by the
+            // delete buttons in the basket so couldnt be reused again. so the id of the quantity field of for example
+            // the item with basktID 11 is "11quan", this is needed so they can be uniquely identified.
+            // once these are recieved a ajax request is made to the url "quantity_update" as a post method, passing
+            // the csrf token, basketID and quantity.
+            function quantity_update(BasketID) {
+                var bask = BasketID;
+                var quant = document.getElementById(BasketID+"quan").value;
+                $.ajax({
+                    url: '/quantity_update/',
+                    method: "POST",
+                    data: {
+                        'csrfmiddlewaretoken': "{{  csrf_token  }}",
+                        bask: bask,
+                        quant: quant
+                    },
+                    success: function () {
+
+                    }
+                });
+            }
+
+            // this is the ajax functino called when the checkout button is pressed on the basket page. this ajax req
+            // calls the url "/checkout/" as a post method, passing the csrftoken. if successful, order complete is
+            // displayed in a elemet in basket.html with an id "checkout" and all of the items displayed in the basket
+            // are removed by replacing the element with id "items" which is a div that stores all the order details
+            // with nothing as they have been removed from the database.
+            function checkout() {
+                $.ajax({
+                    url: '/checkout/',
+                    method: "POST",
+                    data: {
+                        'csrfmiddlewaretoken': "{{  csrf_token  }}",
+                    },
+                    success: function () {
+                    }
+                });
+                document.getElementById("checkmessage").innerHTML = "Checkout complete!";
+                document.getElementById("items").innerHTML = "";
+            }
+    </script>
+</head>
+<body style="background-color:lightgrey;">
+<nav class="navbar navbar-inverse">
+    <div class="container-fluid" >
+
+        <!-- Header Navigation -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#topNavBar">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+             <a class="navbar-brand">
+                    <img src="../../static/SweetShop/images/logo1.png" height="20" width="150"/>
+                </a>
+        </div>
+
+        <!-- buttons and search bar of the header navigation -->
+        <div class="collapse navbar-collapse" id="topNavBar">
+            <ul class="nav navbar-nav">
+                <li ><a href="{% url 'SweetShop:products' %}"><span class="" aria-hidden="true"></span>&nbsp;View Product's</a></li>
+            </ul>
+            <form class="navbar-form navbar-left" role="search" method="get" action="{% url 'SweetShop:index' %}">
+                <div class="form-group">
+                    <input type="text" class="form-control" name="q" value="{{ request.GET.q }}">
+                </div>
+                <button type="submit" class="btn btn-default">Search</button>
+            </form>
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a href="{% url 'SweetShop:basket' %}">
+                        <!-- below uses a glyphicon for the shopping cart button image-->
+                        <span class="glyphicon glyphicon-shopping-cart" aria-hidden="true"></span>&nbsp; Basket
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'SweetShop:logout_user' %}">
+                        <!-- below uses a glyphicon for the logout button image-->
+                        <span class="glyphicon glyphicon-off" aria-hidden="true"></span>&nbsp; Logout
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+{% block body %}
+{% endblock %}
+</body>
+</html>
+
+
+
+
+
+

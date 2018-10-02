@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+
+<!--
+     This is the base template for when the user is not logged in. here the logo, register button and login button are
+     set on the navigation bar. this is used as a base for login.html and register.html
+-->
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    {% load staticfiles %}
+    <link rel="shortcut icon" type="image/png" href="{%  static 'favicon.ico' %}"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <link href='https://fonts.googleapis.com/css?family=Satisfy' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href=""/>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <script src=""></script>
+</head>
+<body>
+<nav class="navbar navbar-inverse">
+    <div class="container-fluid">
+
+        <!-- Header Navigation bar-->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#topNavBar">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+                <a class="navbar-brand">
+                    <img src="../../static/SweetShop/images/logo1.png" height="20" width="150"/>
+                </a>
+        </div>
+
+        <!-- Items -->
+        <div class="collapse navbar-collapse" id="topNavBar">
+            <ul class="nav navbar-nav">
+                <li class="{% block register_active %}{% endblock %}"><a href="{% url 'SweetShop:register' %}">Register</a></li>
+                <li class="{% block login_active %}{% endblock %}"><a href="{% url 'SweetShop:login_user' %}">Log In</a></li>
+            </ul>
+        </div>
+
+    </div>
+</nav>
+{% block body %}
+{% endblock %}
+</body>
+</html>

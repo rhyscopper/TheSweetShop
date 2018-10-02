@@ -1,0 +1,73 @@
+<!--
+     This is the details page, which is displayed when a user clicks to view a specific item from the index page.
+     this document is used to set the product logo, name, price, description and  the add to basket button displayed
+     on each product page.
+-->
+
+<!-- below is what is used to extend base.html-->
+{% extends 'SweetShop/base.html' %}
+{% block title %}{{ Product }}{% endblock %}
+
+{% block body %}
+<div class="container-fluid ">
+    <div class="row">
+        <div class="col-sm-4 col-md-3">
+            <div class="panel panel-default">
+                <div class="panel-body" style=" border: 1px solid black;">
+                    <font size="3" color="red"><h1 id="message"></h1></font>
+                    <a href="">
+                        <!--
+                             this if statement is used to checked if a image_logo (image url) is passed back, if it is
+                             it adds it to a impage attribute to be displayed, otherwise no image to display will
+                             be printed
+                        -->
+                        {% if Product.product_logo %}
+                            <img src="{{ Product.product_logo }}" class="img-responsive">
+                        {% else %}
+                            <h3>No image to display</h3>
+                        {% endif %}
+                    </a>
+                    <h1>
+                        <!-- this prints the product price if the Product object passed back has price-->
+                        &nbsp;£{{ Product.price }}
+                    </h1>
+                    <div class="form-group">
+                        <small>Quantity:
+                            <input type = "text" class="from-control" id="quantity" name = "quantity" value = "1" size="2"/>
+                        </small>
+                    </div>
+                        <!--
+                             this is the button which is used to add items to the basket. when this button is clicked
+                             the onclick attribute is activated which runs the addtobasket() function in the javascript
+                             with the Product.id as it parameter.
+                        -->
+                    <button type="button" id="addToBasket" onclick="addtobasket( {{ Product.id }})"> Add to Basket</button>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-8 col-md-9">
+            <div class="panel panel-default">
+                <div class="panel-body" style=" border: 1px solid black;">
+                    <!-- this prints the product name if the Product object passed back a name.-->
+                    <h1>{{ Product.name }}</h1>
+                    <!-- this section is only visible when an error message is sent back in the context-->
+                    {% if error_message %}
+                        <p><strong>{{ error_message }}</strong></p>
+                    {% endif %}
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <!-- this prints the description of the product of the object passed back.-->
+                            <td>{{ Product.description }}</td>
+                        </tr>
+                        </thead>
+                        <tbody>
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

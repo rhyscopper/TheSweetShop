@@ -1,0 +1,99 @@
+<!--
+     This is the basket page which is displayed when the user clicks the basket button on the main navigation.
+     here the checkout button is set and the elements to display all of the products in the users basket.
+-->
+
+<!-- below is what is used to extend base.html-->
+{% extends 'SweetShop/base.html' %}
+
+{% block body %}
+<div class="container-fluid" >
+    <div class="row">
+        <div class="col-sm-4">
+            <a href="">
+                <img src="../../static/SweetShop/images/shopping-cart.png" height="200" width="200" class="img-responsive">
+            </a>
+        </div>
+        <div class="col-sm-6" >
+            <br><br>
+            <!-- when the page is ran, the user object is passed back, to which the username is extracted to display
+                 in the basket for example if the name is Bob, "Bob's Shopping basket !" is displayed-->
+            <h1>{{ user.username }}'s Shopping Basket!</h1>
+        </div>
+    </div>
+
+    <div class="container" >
+        <div class="row" align="center">
+            <div class=" col-md-4"></div>
+            <div class=" col-md-4">
+                <div class="panel-body" style="background-color:white; border: 1px solid black;" >
+                    <h6 align="center">
+                    <h4>Order Overview</h4>
+                    <!-- this is the checkout button which can be clicked from the basket page. when pressed the
+                        checkout() method is run in the javascript in base.html-->
+                    <button onclick="checkout()" class="btn btn-primary btn-sm">Checkout</button>
+                    </h6>
+                </div>
+            <div class=" col-md-4"></div>
+                <font color="red"><h1 id="checkmessage"></h1></font>
+            </div>
+    </div>
+    <br><br>
+        <!-- the div element below is where the titles of the table in the basket are set.-->
+    <div class="row" style="background-color:lightyellow;">
+        <div style="border: 1px solid black;" class=" col-md-4">Item:</div>
+        <div style="border: 1px solid black;" class=" col-md-2">Price:</div>
+        <div style="border: 1px solid black;" class=" col-md-4">Image:</div>
+        <div style="border: 1px solid black;" class=" col-md-1">Quantity:</div>
+        <div  style="border: 1px solid black;"  class=" col-md-1">Delete:</div>
+    </div>
+        <!--
+            this div  tag is where all of the items in the basket are loaded into, so that when the basket items are
+            removed they can all be removed easy by accessing this area.
+        -->
+    <div id ="items">
+        <!--
+            below the if statement checks if the object allProducts has been passed back in the context, if it has
+            the for loop is ran which get each product object from allProduct and creates all the necessary components
+            for each item.
+        -->
+        {% if allProducts %}
+        {% for product in allProducts %}
+        <br>
+        <!-- this div is set to the product id so that it can be accessed by the different method with ease.-->
+        <div id="{{product.id}}"class="row" style="background-color:white; border: 1px solid black;" >
+            <!-- for each product instance, below prints the name, price, image and quantity of each product.-->
+            <div class=" col-md-4" >{{ product.productID.name }}</div>
+            <div class=" col-md-2" >{{ product.productID.price }}</div>
+            <div class=" col-md-4" ><img src="{{ product.productID.product_logo }}" height="100" width="100"class="img-responsive"></div>
+            <div class=" col-md-1" >
+                <!--
+                    there are three attributes below which are run if a key is pressed on the quanity field.
+                    this runs the quantity_update function passing the productid (which is actually the BasketID).
+                    also the id for this is the productid plus the string "quan" as the product id has been used for the
+                    div of each product, so a random string was added so that we could use the id of a basket product
+                    to deferenciate the different attribute sections.
+                -->
+                <input type = "text" class="from-control" onkeydown="quantity_update({{product.id}})" onkeyup="quantity_update({{product.id}})" onkeypress="quantity_update({{product.id}})" id="{{product.id}}quan" name = "quantity" value = "{{product.quantity }}{{ request.GET.quantity }}" size="4"/>
+            </div>
+            <div class=" col-md-1" >
+                {% csrf_token %}
+                <input type="hidden" name="prod_id" value="{{ product.id }}" />
+                <!--
+                    the button below is added so that if pressed the deleteitem function is called from the javascript
+                    which is passed the productid( which is the basketid) as a paramater so that the right basket item
+                    can be deleted.
+                -->
+                <button onclick="deleteitem( {{ product.id }})" type="submit" class="btn btn-danger btn-xs">
+                    <!-- below uses a glyficon for the delete button.-->
+                    <span class="glyphicon glyphicon-remove"></span>&nbsp; Delete
+                </button>
+            </div>
+        </div>
+        {% endfor %}
+        {% endif %}
+        <br>
+    </div>
+</div>
+</div>
+{% endblock %}
